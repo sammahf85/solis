@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+
+    // shop settings and menu: anyone can read, app users can update
+    match /meta/{doc}     { allow read: if true;  allow write: if signedIn(); }
+    match /menu/{id}      { allow read: if true;  allow write: if signedIn(); }
+
+    // drivers, delivery companies and orders
+    match /drivers/{id}   { allow read, write: if signedIn(); }
+    match /partners/{id}  { allow read, write: if signedIn(); }
+    match /orders/{id}    { allow read, write: if signedIn(); }
+  }
+}
