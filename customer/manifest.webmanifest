@@ -1,0 +1,32 @@
+{
+  "id": "./",
+  "name": "Solis",
+  "short_name": "Solis",
+  "description": "Order coffee for delivery or pickup",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f0e8",
+  "theme_color": "#3b2417",
+  "icons": [
+    {
+      "src": "../assets/icons/customer-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../assets/icons/customer-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../assets/icons/customer-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
