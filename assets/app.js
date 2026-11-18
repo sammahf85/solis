@@ -3,6 +3,9 @@
 const APP=window.APP||'customer';
 const MIN=60000;
 const $app=document.getElementById('app');
+const DEMO=/[?&]demo\b/.test(location.search);
+const EMBED=/[?&]embed\b/.test(location.search);
+const AUTO=/[?&]auto\b/.test(location.search);
 
 /* ============ DEFAULT DATA ============ */
 function baseData(){
@@ -39,11 +42,13 @@ async function loadDemo(){
   const p2={id:uid(),ord:2,name:'CityDash Couriers',phone:'+961 71 333 444',contact:'Rami',fee:2,pin:'6666',active:true};
   S.drivers.push(d1,d2);S.partners.push(p1,p2);
   const it=(name,qty,unit,opt)=>({name,qty,unit,opt:opt||''});
-  const mk=async(ago,type,cust,items,payment,status,dlv)=>{
+  const mk=async(ago,type,cust,items,payment,status,dlv,extra)=>{
     const sub=items.reduce((a,i)=>a+i.qty*i.unit,0),fee=type==='delivery'?S.settings.fee:0,tt=t-ago*MIN;
-    const o={id:uid(),no:await Sync.nextNo(),t:tt,type,cust,items,sub,fee,total:sub+fee,payment,paid:false,status,dlv,times:{new:tt},log:[{t:tt,m:'Order placed'}]};
+    const o=Object.assign({id:uid(),no:await Sync.nextNo(),t:tt,type,cust,items,sub,fee,total:sub+fee,payment,paid:false,status,dlv,times:{new:tt},log:[{t:tt,m:'Order placed'}]},extra||{});
     S.orders.unshift(o);
   };
+  await mk(18,'delivery',{name:'Joelle Haddad',phone:'+961 76 321 654',address:'Jbeil, Rue Pépé Abed, Bldg 9, 3rd floor',notes:''},[it('Iced Latte',2,4.75,'Large'),it('Chocolate Chip Cookie',2,1.75)],'cash','out',{method:'inhouse',driverId:d1.id});
+  await mk(9,'delivery',{name:'Karim Nassar',phone:'+961 3 777 210',address:'Blat, main road, Villa Nassar',notes:'Call on arrival'},[it('Cold Brew',1,4.25,'Medium'),it('Zaatar Croissant',1,2.5)],'omt','ready',{method:null},{paid:true});
   await mk(12,'delivery',{name:'Rita Sfeir',phone:'+961 71 444 555',address:'Byblos Old Souk, near the castle, shop 3',notes:''},[it('Spanish Latte',2,4.25,'Medium'),it('Butter Croissant',1,2.25)],'cash','preparing',{method:'partner',partnerId:p1.id,pStatus:'requested',fee:p1.fee});
   await mk(7,'pickup',{name:'Maya Haddad',phone:'+961 70 222 333',address:'',notes:''},[it('Iced Latte',1,4.75,'Large'),it('Cheesecake Slice',1,4.5)],'cash','preparing',{method:null});
   await mk(2,'delivery',{name:'Nadim Rizk',phone:'+961 3 456 789',address:'Amchit, main road, Bldg 14, 2nd floor',notes:'Ring twice'},[it('Cappuccino',2,4,'Medium, Oat'),it('Zaatar Croissant',2,2.5)],'whish','new',{method:null});
@@ -88,7 +93,7 @@ const cartQty=()=>ui.cart.reduce((a,l)=>a+l.qty,0);
 const nextOrd=arr=>arr.reduce((a,x)=>Math.max(a,x.ord||0),0)+1;
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2600);}
 const isTyping=()=>{const a=document.activeElement;return a&&['INPUT','TEXTAREA','SELECT'].includes(a.tagName);};
-const appLink=name=>location.protocol==='file:'?new URL('../'+name+'/index.html',location.href).href:new URL('../'+name+'/',location.href).href;
+const appLink=name=>(location.protocol==='file:'?new URL('../'+name+'/index.html',location.href).href:new URL('../'+name+'/',location.href).href)+(DEMO?'?demo=1':'');
 
 /* alert sound */
 let actx=null;
@@ -137,11 +142,11 @@ function pinScreen(title,sub,backAction){
 /* ============ SHOP ============ */
 function vShop(){
   const s=S.settings;
-  if(!ME.shopOk)return `<div class="wrap narrow"><div class="brandrow">${cupSvg}<b>${esc(s.name)}</b></div>${pinScreen('Shop dashboard','Enter the shop PIN to continue.')}</div>`;
+  if(!ME.shopOk)return `<div class="wrap narrow"><div class="brandrow">${cupSvg}<b>${esc(s.name)}</b></div>${pinScreen('Shop dashboard','Enter the shop PIN to continue.'+(DEMO?' <b>Demo PIN: '+esc(s.pin)+'</b>':''))}</div>`;
   const n=S.orders.filter(o=>o.status==='new').length;
   const tabs=[['orders','Live orders'],['menu','Menu'],['drivers','Drivers'],['partners','Delivery companies'],['reports','Reports'],['settings','Settings']];
   const views={orders:sOrders,menu:sMenu,drivers:sDrivers,partners:sPartners,reports:sReports,settings:sSettings};
-  return `<header class="top"><div class="logo">${cupSvg}${esc(s.name)}</div><span class="live ${Sync.mode}">${Sync.mode==='cloud'?'● Live':'● This device only'}</span>
+  return `<header class="top"><div class="logo">${cupSvg}${esc(s.name)}</div><span class="live ${Sync.mode}">${Sync.mode==='cloud'?'● Live':DEMO?'● Demo':'● This device only'}</span>
     <div class="row right">${installBtn(true)}<button class="btn ghost sm" data-a="lockShop">Lock</button></div></header>
   <div class="wrap">
   <div class="shophead"><div class="muted sm">${esc(s.address)} · Delivery: <b>${MODE[s.mode]}</b></div>
@@ -393,7 +398,7 @@ function vDriver(){
   if(!d){
     if(ui.pinFor&&D(ui.pinFor))return `<div class="phone"><div class="ph-top"><b>🛵 Driver · ${esc(S.settings.name)}</b></div><div class="ph-body">${pinScreen('Hi '+esc(D(ui.pinFor).name.split(' ')[0]),'Enter your driver PIN.','pinBack')}</div></div>`;
     return `<div class="phone"><div class="ph-top"><b>🛵 Driver · ${esc(S.settings.name)}</b>${installBtn(true)}</div><div class="ph-body"><h2>Who’s driving?</h2><p class="muted sm">Select your name to log in.</p>
-    ${S.drivers.map(x=>`<button class="pick btnlike" data-a="dSelect" data-id="${x.id}"><div><b>${esc(x.name)}</b><div class="sm muted">${esc(x.vehicle||'')} · ${esc(x.phone)}</div></div><span>›</span></button>`).join('')||'<p>No drivers yet. Ask the shop to add you.</p>'}</div></div>`;
+    ${S.drivers.map(x=>`<button class="pick btnlike" data-a="dSelect" data-id="${x.id}"><div><b>${esc(x.name)}</b><div class="sm muted">${esc(x.vehicle||'')} · ${esc(x.phone)}${DEMO?' · <b>Demo PIN '+esc(x.pin)+'</b>':''}</div></div><span>›</span></button>`).join('')||'<p>No drivers yet. Ask the shop to add you.</p>'}</div></div>`;
   }
   const md=S.settings.mode;
   const mine=S.orders.filter(o=>o.dlv.method==='inhouse'&&o.dlv.driverId===d.id&&['preparing','ready','out'].includes(o.status)).sort((a,b)=>a.t-b.t);
@@ -426,7 +431,7 @@ function vCourier(){
   if(!p){
     if(ui.pinFor&&P(ui.pinFor))return `<div class="wrap narrow"><div class="brandrow">🏢 <b>${esc(P(ui.pinFor).name)}</b></div>${pinScreen('Company login','Enter the PIN given to you by '+esc(S.settings.name)+'.','pinBack')}</div>`;
     return `<div class="wrap narrow"><div class="row"><h1>Delivery Partner</h1><span class="right">${installBtn()}</span></div><p class="muted">Pickup requests from ${esc(S.settings.name)}. Select your company:</p>
-    ${S.partners.map(x=>`<button class="pick btnlike" data-a="pSelect" data-id="${x.id}"><div><b>${esc(x.name)}</b><div class="sm muted">${esc(x.contact||'')} · ${esc(x.phone)}</div></div><span>›</span></button>`).join('')||'<p>No delivery companies set up yet.</p>'}</div>`;
+    ${S.partners.map(x=>`<button class="pick btnlike" data-a="pSelect" data-id="${x.id}"><div><b>${esc(x.name)}</b><div class="sm muted">${esc(x.contact||'')} · ${esc(x.phone)}${DEMO?' · <b>Demo PIN '+esc(x.pin)+'</b>':''}</div></div><span>›</span></button>`).join('')||'<p>No delivery companies set up yet.</p>'}</div>`;
   }
   const reqs=S.orders.filter(o=>o.dlv.method==='partner'&&o.dlv.partnerId===p.id);
   const open=reqs.filter(o=>o.dlv.pStatus==='requested'&&o.status!=='cancelled');
@@ -456,6 +461,7 @@ function pCard(o){
 
 /* ============ ACTIONS ============ */
 const A={
+  resetDemo:()=>{try{localStorage.removeItem('solis_demo_db');localStorage.removeItem('solis_demo_me');}catch(e){}location.reload();},
   install:()=>{if(installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;render();});}else ui.modal={type:'install'};},
   lockShop:()=>{ME.shopOk=false;saveMe();},
   shopTab:d=>{ui.shopTab=d.k;ui.clearArm=false;},
@@ -560,7 +566,7 @@ function render(){
   if(!S.settings){$app.innerHTML='<div class="wrap narrow center"><h2>Coming soon</h2><p class="muted">This shop is still being set up. Please check back shortly.</p></div>';return;}
   pendingRender=false;
   const key=APP+ui.cScreen,b=document.querySelector('.ph-body'),st=b&&render._k===key?b.scrollTop:0;
-  $app.innerHTML={shop:vShop,customer:vCustomer,driver:vDriver,courier:vCourier}[APP]();
+  $app.innerHTML=(DEMO&&!EMBED&&Sync.mode==='local'?'<div class="demo-ribbon">DEMO · sample data · <a href="../demo/">All demo apps</a> · <a href="#" data-a="resetDemo">Reset demo</a></div>':'')+{shop:vShop,customer:vCustomer,driver:vDriver,courier:vCourier}[APP]();
   const b2=document.querySelector('.ph-body');if(b2)b2.scrollTop=st;render._k=key;
   document.title=S.settings.name+({shop:' · Shop',customer:'',driver:' · Driver',courier:' · Delivery Partner'}[APP]);
   const m=document.getElementById('modal');
@@ -608,8 +614,11 @@ render();
 Sync.start({orders:APP==='customer'?'mine':'recent'},{
   onRemote:()=>{if(!ui.ready)return;checkAlerts();softRender();},
   onError:()=>toast('Connection problem — retrying…')
-}).then(()=>{
-  if(APP==='shop'&&!S.settings){const b=baseData();S.settings=b.settings;S.menu=b.menu;Sync.push();}
+}).then(async()=>{
+  const demoOk=DEMO&&Sync.mode==='local';
+  if(!S.settings&&(APP==='shop'||demoOk)){const b=baseData();S.settings=b.settings;S.menu=b.menu;if(demoOk){S.settings.name='Solis Demo Café';await loadDemo();}Sync.push();markSeen();}
+  if(demoOk&&!EMBED)document.body.classList.add('is-demo');
+  if(demoOk&&AUTO){if(APP==='shop')ME.shopOk=true;if(APP==='driver'&&S.drivers[0]){ME.driverId=S.drivers[0].id;}if(APP==='courier'&&S.partners[0])ME.partnerId=S.partners[0].id;saveMe();}
   ui.ready=true;checkAlerts();render();
 }).catch(e=>{console.error(e);ui.error='Please check your internet connection and try again.';render();});
 setInterval(()=>{if(ui.ready&&!isTyping()&&!ui.modal)render();},30000);

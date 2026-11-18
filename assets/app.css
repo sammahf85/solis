@@ -140,3 +140,6 @@ body.mobile-app .ph-top{padding-top:calc(14px + env(safe-area-inset-top))}
 body.mobile-app .ph-body{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
 body.mobile-app .cartbar{bottom:calc(12px + env(safe-area-inset-bottom))}
 .top .btn.ghost{color:#fff;border-color:rgba(255,255,255,.4)}
+.demo-ribbon{background:#c98a3d;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:6px 10px;padding-top:calc(6px + env(safe-area-inset-top))}
+.demo-ribbon a{color:#fff}
+body.mobile-app.is-demo .phone{height:calc(100dvh - 30px)}

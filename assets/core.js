@@ -1,6 +1,7 @@
 /* Solis — shared data & live sync engine */
 (function(){
-  var KEY_DB='solis_db', KEY_ME='solis_me';
+  var IS_DEMO=/[?&]demo\b/.test(location.search);
+  var KEY_DB=IS_DEMO?'solis_demo_db':'solis_db', KEY_ME=IS_DEMO?'solis_demo_me':'solis_me';
   var COLLS=['menu','drivers','partners','orders'];
   var RECENT_DAYS=3;
   var FB_VER='10.12.2';
@@ -113,7 +114,7 @@
     start:function(opts,h){
       filter=opts||{};hooks=h||{};
       var cfg=window.SOLIS_FIREBASE;
-      adapter=(cfg&&cfg.apiKey&&cfg.projectId)?CloudAdapter(cfg):LocalAdapter();
+      adapter=(!IS_DEMO&&cfg&&cfg.apiKey&&cfg.projectId)?CloudAdapter(cfg):LocalAdapter();
       return adapter.start();
     },
     remote:function(ch){
