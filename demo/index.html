@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solis — Live Demo</title>
+<meta name="description" content="Try the Solis coffee shop ordering & delivery apps with sample data.">
+<meta name="theme-color" content="#2a1a10">
+<link rel="icon" href="../assets/icons/customer-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#22150d;--esp:#2a1a10;--car:#c98a3d;--car2:#e0a85c;--cream:#f7f1e9;--sand:#efe4d6;--muted:#7d6a5b;--line:#e6d8c7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased}
+header{background:radial-gradient(900px 400px at 80% 0%,#5a3720,var(--esp) 60%,#170d07);color:#fff;padding:28px 22px 46px}
+.wrap{max-width:1040px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px}
+h1{font-size:42px;line-height:1.05;letter-spacing:-.02em;margin:34px 0 12px;font-weight:800}
+h1 em{font-style:normal;color:var(--car2)}
+header p{color:#e8d9c8;font-size:17px;max-width:620px;line-height:1.5}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:-26px}
+.app{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(40,20,5,.08)}
+.app img{width:56px;height:56px;border-radius:16px;margin-bottom:14px}
+.app h2{font-size:18px;margin-bottom:6px}
+.app p{font-size:14px;color:#5c4a3d;line-height:1.5;flex:1}
+.pin{background:var(--sand);border-radius:10px;padding:8px 10px;font-size:13px;margin:12px 0;color:#3b2417}
+.btn{display:block;text-align:center;background:var(--esp);color:#fff;text-decoration:none;font-weight:700;padding:12px;border-radius:12px}
+.btn.acc{background:var(--car)}
+section{padding:40px 0}
+h3{font-size:24px;letter-spacing:-.01em;margin-bottom:16px}
+ol{list-style:none;display:grid;gap:12px;counter-reset:s}
+ol li{counter-increment:s;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px 58px;position:relative;line-height:1.5;font-size:15px}
+ol li:before{content:counter(s);position:absolute;left:14px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--car);color:#fff;display:grid;place-items:center;font-weight:800}
+.note{font-size:13px;color:var(--muted);margin-top:14px}
+.contact{background:var(--esp);color:#fff;border-radius:20px;padding:26px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.contact a{color:#fff;font-weight:700;text-decoration:none}
+.contact .btn{background:var(--car);display:inline-block;padding:12px 18px}
+@media(max-width:900px){.apps{grid-template-columns:1fr 1fr}h1{font-size:32px}}
+@media(max-width:520px){.apps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="brand"><svg width="34" height="34" viewBox="0 0 40 40"><circle cx="20" cy="17" r="8" fill="#e0a85c"/><g stroke="#e0a85c" stroke-width="2.4" stroke-linecap="round"><path d="M20 3v3M8 17H5M35 17h-3M10.5 7.5l2 2M29.5 7.5l-2 2"/></g><path d="M7 24h26l-2 6a7 7 0 0 1-6.7 5H15.7A7 7 0 0 1 9 30z" fill="#fff"/></svg>Solis</div>
+  <h1>Try Solis <em>live</em> — with a sample coffee shop.</h1>
+  <p>Open the four apps below (ideally each in its own tab, or on different phones in the same browser). Place an order as a customer and watch it move through the shop, the driver and the delivery company in real time.</p>
+</div></header>
+<div class="wrap" style="padding:0 18px">
+  <div class="apps">
+    <div class="app"><img src="../assets/icons/customer-192.png" alt=""><h2>Customer App</h2><p>Browse the menu, customise drinks, order for delivery or pickup and track it live.</p><div class="pin">No login needed</div><a class="btn acc" href="../customer/?demo=1" target="_blank" rel="noopener">Open Customer App</a></div>
+    <div class="app"><img src="../assets/icons/shop-192.png" alt=""><h2>Shop Dashboard</h2><p>Accept orders, dispatch to drivers or a delivery company, edit the menu, see reports.</p><div class="pin">PIN <b>1234</b></div><a class="btn" href="../shop/?demo=1" target="_blank" rel="noopener">Open Shop Dashboard</a></div>
+    <div class="app"><img src="../assets/icons/driver-192.png" alt=""><h2>Driver App</h2><p>Accept jobs, open maps, confirm pickup and delivery, track cash to hand in.</p><div class="pin">Elie <b>1111</b> · Karim <b>2222</b></div><a class="btn" href="../driver/?demo=1" target="_blank" rel="noopener">Open Driver App</a></div>
+    <div class="app"><img src="../assets/icons/courier-192.png" alt=""><h2>Delivery Company</h2><p>Receive pickup requests, assign a rider, mark picked up and delivered.</p><div class="pin">SwiftRun <b>5555</b> · CityDash <b>6666</b></div><a class="btn" href="../courier/?demo=1" target="_blank" rel="noopener">Open Company App</a></div>
+  </div>
+
+  <section>
+    <h3>A 2-minute tour</h3>
+    <ol>
+      <li><b>Customer App:</b> add a Spanish Latte (pick size & milk) and a croissant, choose <b>Delivery</b>, fill in a name, phone and address, then <b>Place order</b>.</li>
+      <li><b>Shop Dashboard</b> (PIN 1234): the order rings in <b>New</b>. Press <b>Accept</b> — the customer’s screen switches to “Being prepared”.</li>
+      <li>Press <b>Dispatch</b>: give it to driver <b>Elie</b>, or choose <b>Delivery company → SwiftRun</b>.</li>
+      <li><b>Driver App</b> (Elie, 1111) or <b>Delivery Company</b> (SwiftRun, 5555): accept the job. In the shop press <b>Mark ready</b>, then in the driver or company app press <b>Picked up</b> and <b>Delivered</b>.</li>
+      <li>Watch the customer’s tracking update at each step, then open <b>Reports</b> in the shop to see sales, payments, driver cash and courier balances.</li>
+    </ol>
+    <p class="note">This demo runs on sample data stored in your browser only. Use “Reset demo” in the orange bar to start over. Real shops get their own secure, cloud-synced setup across all phones.</p>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="contact">
+      <div><div style="font-size:20px;font-weight:800;margin-bottom:6px">Want Solis for your coffee shop?</div>
+      ✉ <a href="mailto:solis.lb@proton.me">solis.lb@proton.me</a> &nbsp;·&nbsp; ☎ <a href="https://wa.me/9613002919">+961 3 002 919</a></div>
+      <a class="btn" href="../catalogue/">View the catalogue</a>
+    </div>
+  </section>
+</div>
+</body>
+</html>
